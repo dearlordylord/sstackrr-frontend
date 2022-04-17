@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-const GAME_STATE_FIELDS_PARTIAL = '{ id, state, isStalemate, winner, nextPlayer }' as const;
+const GAME_STATE_FIELDS_PARTIAL = '{ id, state, isStalemate, winner, nextPlayer, redClaimed, blueClaimed }' as const;
 
 export const GET_GAME_QUERY = gql`
     query GetGame($gameToken: String!) { game(gameToken: $gameToken) ${GAME_STATE_FIELDS_PARTIAL} }

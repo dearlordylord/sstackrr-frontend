@@ -16,4 +16,6 @@ export interface GameStateResponse {
   nextPlayer?: PlayerColor;
   winner?: PlayerColor;
   isStalemate: boolean;
+  redClaimed: boolean;
+  blueClaimed: boolean;
 }
