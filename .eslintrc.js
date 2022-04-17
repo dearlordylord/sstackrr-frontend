@@ -34,6 +34,7 @@ module.exports = {
     'no-console': 'off',
     'func-names': 'off',
     'max-len': 'off', // @typescript-eslint/max-len is used instead
+    'jsx-a11y/control-has-associated-label': 'off', // not here
   },
   "overrides": [
     {

@@ -5,22 +5,8 @@ import { PlayerColor, PlayerId } from '../types';
 import { GameId } from '../../game/types';
 import { useClaimPlayer } from './api/useClaimPlayer';
 import { Loader } from '../../utils/loader';
-
-const playerLabels: {[k in PlayerColor]: string} = {
-  RED: 'Red',
-  BLUE: 'Blue',
-};
-
-// https://stackoverflow.com/a/66593793/2123547 - use full class names
-const playerColorClassNames: {[k in PlayerColor]: string} = {
-  RED: 'bg-red-500',
-  BLUE: 'bg-blue-500',
-};
-
-const playerColorHoverClassNames: {[k in PlayerColor]: string} = {
-  RED: 'bg-red-700',
-  BLUE: 'bg-blue-700',
-};
+import { playerColorClassNames, playerColorHoverClassNames } from '../colors';
+import { playerLabels } from '../labels';
 
 interface ClaimPlayerButtonProps {
   gameToken: GameId;
@@ -37,12 +23,10 @@ export const makeClaimPlayerButton = (color: PlayerColor) => {
     const handleClick = useCallback(async (e: MouseEvent) => {
       e.preventDefault();
       if (disabled) return;
-      const r = await mutate({ gameToken, playerColor: color });
-      if (r.errors) {
-        console.error('errors claiming player:', r.errors);
-        toast.error('Error claiming player');
-        return;
-      }
+      await mutate({ gameToken, playerColor: color }).catch(e => {
+        console.error('errors claiming player:', e);
+        throw e;
+      });
       toast.success(`You are now ${playerLabel}`);
     }, [disabled, gameToken, playerLabel]);
     if (isUpdating) return <Loader />;

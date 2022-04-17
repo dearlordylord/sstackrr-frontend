@@ -32,9 +32,6 @@ export const useClaimPlayer = (gameToken?: GameId) => {
         gameToken: args.gameToken,
         player: args.playerColor,
       },
-      // update: (store, {data}) => {
-      //   const { claimPlayer } = data!;
-      // },
     }).catch((e) => {
       console.error(e);
       toast.error(e.message);

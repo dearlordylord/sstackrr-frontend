@@ -6,7 +6,7 @@ export const GET_GAME_QUERY = gql`
     query GetGame($gameToken: String!) { game(gameToken: $gameToken) ${GAME_STATE_FIELDS_PARTIAL} }
 `;
 export const GET_ME_QUERY = gql`
-    subscription GetMe($playerToken: String!) { me(playerToken: $playerToken) }
+    query GetMe($playerToken: String!) { me(playerToken: $playerToken) }
 `;
 export const GAME_SUBSCRIPTION = gql`
     subscription GameSubscription($gameToken: String!) { game(gameToken: $gameToken) ${GAME_STATE_FIELDS_PARTIAL} }
@@ -27,5 +27,11 @@ export const INIT_GAME = gql`
             id,
             state
         }
+    }
+`;
+
+export const TURN = gql`
+    mutation Turn($playerToken: String!, $turn: TurnInput!) {
+        turn(playerToken: $playerToken, turn: $turn) ${GAME_STATE_FIELDS_PARTIAL}
     }
 `;

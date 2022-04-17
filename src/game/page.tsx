@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import cx from 'classnames';
 
 import { usePlayerIdForGameId } from '../player/usePlayerIdForGameId';
 import { GameId } from './types';
@@ -15,7 +16,10 @@ export function GamePage() {
   return (
     <div className="pt-10 w-full flex">
       <div className="w-full">
-        <div className="space-x-4">
+        <div className={cx('space-x-4', {
+          hidden: !!playerToken,
+        })}
+        >
           <RedPlayerButton gameToken={gameToken} playerToken={playerToken} />
           <BluePlayerButton gameToken={gameToken} playerToken={playerToken} />
         </div>
