@@ -20,10 +20,10 @@ export const makeClaimPlayerButton = (color: PlayerColor) => {
   return function ({ playerToken, gameToken }: ClaimPlayerButtonProps) {
     const disabled = !!playerToken;
     const { mutate, loading: isUpdating } = useClaimPlayer(gameToken);
-    const handleClick = useCallback(async (e: MouseEvent) => {
-      e.preventDefault();
+    const handleClick = useCallback(async (ev: MouseEvent) => {
+      ev.preventDefault();
       if (disabled) return;
-      await mutate({ gameToken, playerColor: color }).catch(e => {
+      await mutate({ gameToken, playerColor: color }).catch((e) => {
         console.error('errors claiming player:', e);
         throw e;
       });

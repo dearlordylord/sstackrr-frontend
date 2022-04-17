@@ -3,6 +3,7 @@ import {
   forwardRef, useMemo, MouseEvent, useCallback,
 } from 'react';
 
+import { toast } from 'react-toastify';
 import { GameId, GameSide } from './types';
 import { PlayerColor, PlayerId } from '../player/types';
 import { useGame } from './api/get';
@@ -12,7 +13,6 @@ import { playerColorClassNames } from '../player/colors';
 import { GameStateResponse } from './api/types';
 import { usePlayerColor } from '../player/usePlayerColor';
 import { useMakeTurn } from './api/turn';
-import { toast } from 'react-toastify';
 import { playerLabels } from '../player/labels';
 import { NewGameButton } from './newGameButton';
 
@@ -53,7 +53,7 @@ const controlsButtonSymbols: {[k in GameSide]: string} = {
 };
 
 function ControlsButton({
-  cellSide, side, height, playerColor, playerToken
+  cellSide, side, height, playerColor, playerToken,
 }: {playerToken?: PlayerId, playerColor: PlayerColor, cellSide: number, height: number, side: GameSide}) {
   const { mutate: makeTurn } = useMakeTurn();
   const marginClass = cellMarginClass;
@@ -66,12 +66,12 @@ function ControlsButton({
     await makeTurn({
       playerToken: playerToken!,
       turn: {
-        side, height
-      }
-    }).catch(e => {
-      console.error('error making turn', e);
+        side, height,
+      },
+    }).catch((err) => {
+      console.error('error making turn', err);
       toast.error('Error making turn');
-      throw e;
+      throw err;
     });
   }, [side, height, playerToken]);
   return (
@@ -87,11 +87,14 @@ function ControlsButton({
 }
 
 /* eslint-disable react/no-array-index-key */
-const makeControls = (side: GameSide) => function ({ canControl, playerToken, playerColor, field, cellSide }: { canControl: boolean, playerToken?: PlayerId, playerColor: PlayerColor, field: GameStateResponse['state'], cellSide: number }) {
+const makeControls = (side: GameSide) => function ({
+  canControl, playerToken, playerColor, field, cellSide,
+}: { canControl: boolean, playerToken?: PlayerId, playerColor: PlayerColor, field: GameStateResponse['state'], cellSide: number }) {
   return (
     <div className={cx('flex flex-col', {
       invisible: !canControl,
-    })}>
+    })}
+    >
       {field.map((_, i) => (
         <ControlsButton playerToken={playerToken} playerColor={playerColor} height={i} cellSide={cellSide} side={side} key={i} />
       ))}
@@ -123,10 +126,31 @@ export function Game({ gameToken, playerToken }: Props) {
   const canControl = !!playerToken && !game.game.isStalemate && !game.game.winner && game.game.nextPlayer === playerColor;
   return (
     <div>
-      {game.game.winner ? <div className="flex flex-col">
-        <div className={playerColorClassNames[game.game.winner]}>Player {playerLabels[game.game.winner]} won!</div>
-        <NewGameButton/>
-      </div>: null}
+      {playerColor ? (
+        <div className="flex place-content-center">
+          <span className="mr-1">You are </span>
+          {' '}
+          <span className={playerColorClassNames[playerColor]}>{playerLabels[playerColor]}</span>
+        </div>
+      ) : null}
+      {game.game.nextPlayer ? (
+        <div className="flex place-content-center">
+          <span className="mr-1">Turn is </span>
+          {' '}
+          <span className={playerColorClassNames[game.game.nextPlayer]}>{playerLabels[game.game.nextPlayer]}</span>
+        </div>
+      ) : null}
+      {game.game.winner ? (
+        <div className="flex flex-col">
+          <div className={playerColorClassNames[game.game.winner]}>
+            Player
+            {playerLabels[game.game.winner]}
+            {' '}
+            won!
+          </div>
+          <NewGameButton />
+        </div>
+      ) : null}
       <div className="flex flex-row place-content-center">
         <LeftControls canControl={canControl} playerToken={playerToken} playerColor={playerColor!} field={field} cellSide={cellSide} />
         <Field cellSide={cellSide} field={field} />
