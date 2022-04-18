@@ -15,6 +15,8 @@ import { usePlayerColor } from '../player/usePlayerColor';
 import { useMakeTurn } from './api/turn';
 import { playerLabels } from '../player/labels';
 import { NewGameButton } from './newGameButton';
+import { makeGameRoute } from './route';
+import { useLocation } from 'react-router-dom';
 
 interface Props {
   gameToken: GameId;
@@ -106,6 +108,18 @@ const makeControls = (side: GameSide) => function ({
 const LeftControls = makeControls('LEFT');
 const RightControls = makeControls('RIGHT');
 
+const InviteLinkButton = ({ gameToken }: { gameToken: GameId }) => {
+  const handleClick = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    const url = window.location.origin + makeGameRoute(gameToken);
+    window.navigator.clipboard.writeText(url);
+    toast.success('Invite link copied to clipboard');
+  }, [gameToken])
+  return <button type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleClick}>
+    Copy Invite Link
+  </button>;
+};
+
 export function Game({ gameToken, playerToken }: Props) {
   const { data: game, loading: isGameLoading, error } = useGame(gameToken);
   const cellSide = useCellSide();
@@ -124,9 +138,11 @@ export function Game({ gameToken, playerToken }: Props) {
   if (!game) return <div>No game fetched</div>; // unlikely but will fix us a type error
   const field = game.game.state;
   const canControl = !!playerToken && !game.game.isStalemate && !game.game.winner && game.game.nextPlayer === playerColor;
+  const isFinished = game.game.isStalemate || !!game.game.winner;
   return (
     <div>
-      {playerColor ? (
+      <div className="flex justify-center"><div className="flex flex-row space-x-3 w-fit">
+      <div>{playerColor ? (
         <div className="flex place-content-center">
           <span className="mr-1">You are </span>
           {' '}
@@ -139,7 +155,8 @@ export function Game({ gameToken, playerToken }: Props) {
           {' '}
           <span className={playerColorClassNames[game.game.nextPlayer]}>{playerLabels[game.game.nextPlayer]}</span>
         </div>
-      ) : null}
+      ) : null}</div><div>{!isFinished ? <InviteLinkButton gameToken={gameToken} /> : null}</div></div></div>
+
       {game.game.winner ? (
         <div className="flex flex-col">
           <div className={playerColorClassNames[game.game.winner]}>
