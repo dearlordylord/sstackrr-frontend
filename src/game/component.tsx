@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import {
-  forwardRef, useMemo, MouseEvent, useCallback,
+  forwardRef, useMemo, MouseEvent, useCallback, useEffect, useRef,
 } from 'react';
 
 import { toast } from 'react-toastify';
@@ -16,6 +16,7 @@ import { useMakeTurn } from './api/turn';
 import { playerLabels } from '../player/labels';
 import { NewGameButton } from './newGameButton';
 import { makeGameRoute } from './route';
+import { playTurnSound } from '../sound';
 
 interface Props {
   gameToken: GameId;
@@ -121,12 +122,27 @@ function InviteLinkButton({ gameToken }: { gameToken: GameId }) {
   );
 }
 
+const useTurnSound = ({ nextPlayer, playerColor, isPlayerColorLoading }: { nextPlayer?: PlayerColor, playerColor?: PlayerColor, isPlayerColorLoading: boolean }) => {
+  const nextPlayerRef = useRef<PlayerColor | undefined>();
+  useEffect(() => {
+    if (!nextPlayer) return;
+    if (isPlayerColorLoading) return; // not ready to run any logic
+    if (nextPlayerRef.current === nextPlayer) return;
+    const previousPlayer = nextPlayerRef.current; // logic to not run at the start
+    nextPlayerRef.current = nextPlayer;
+    if (!previousPlayer) return;
+    if (playerColor && previousPlayer === playerColor) return;
+    playTurnSound();
+  }, [nextPlayer, playerColor]);
+};
+
 export function Game({ gameToken, playerToken }: Props) {
-  const { data: game, loading: isGameLoading, error } = useGame(gameToken);
+  const { data: gameData, loading: isGameLoading, error } = useGame(gameToken);
   const cellSide = useCellSide();
   const { data: playerColorData, loading: isColorLoading } = usePlayerColor(playerToken);
   const playerColor = playerColorData?.me;
   const isLoading = isGameLoading || isColorLoading;
+  useTurnSound({ nextPlayer: gameData?.game.nextPlayer, playerColor, isPlayerColorLoading: isColorLoading });
   if (isLoading) return <Loader />;
   if (error) {
     return (
@@ -136,10 +152,11 @@ export function Game({ gameToken, playerToken }: Props) {
       </div>
     );
   }
-  if (!game) return <div>No game fetched</div>; // unlikely but will fix us a type error
-  const field = game.game.state;
-  const canControl = !!playerToken && !game.game.isStalemate && !game.game.winner && game.game.nextPlayer === playerColor;
-  const isFinished = game.game.isStalemate || !!game.game.winner;
+  if (!gameData) return <div>No game fetched</div>; // unlikely but will fix us a type error
+  const game = gameData?.game;
+  const field = game.state;
+  const canControl = !!playerToken && !game.isStalemate && !game.winner && game.nextPlayer === playerColor;
+  const isFinished = game.isStalemate || !!game.winner;
   return (
     <div>
       <div className="flex justify-center">
@@ -150,11 +167,11 @@ export function Game({ gameToken, playerToken }: Props) {
               {' '}
               <span className={playerColor ? playerColorClassNames[playerColor] : 'bg-gray-200'}>{playerColor ? playerLabels[playerColor] : 'a spectator'}</span>
             </div>
-            {game.game.nextPlayer ? (
+            {game.nextPlayer ? (
               <div className="flex place-content-center">
                 <span className="mr-1">Turn is </span>
                 {' '}
-                <span className={playerColorClassNames[game.game.nextPlayer]}>{playerLabels[game.game.nextPlayer]}</span>
+                <span className={playerColorClassNames[game.nextPlayer]}>{playerLabels[game.nextPlayer]}</span>
               </div>
             ) : null}
           </div>
@@ -162,11 +179,11 @@ export function Game({ gameToken, playerToken }: Props) {
         </div>
       </div>
 
-      {game.game.winner ? (
+      {game.winner ? (
         <div className="flex flex-col">
-          <div className={playerColorClassNames[game.game.winner]}>
+          <div className={playerColorClassNames[game.winner]}>
             Player
-            {playerLabels[game.game.winner]}
+            {playerLabels[game.winner]}
             {' '}
             won!
           </div>
