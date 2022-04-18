@@ -39,6 +39,7 @@ export const makeClaimPlayerButton = (color: PlayerColor) => {
           'opacity-50 cursor-not-allowed': disabled,
         })}
       >
+        {'Claim '}
         {playerLabel}
         {' '}
         Player

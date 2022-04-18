@@ -145,13 +145,11 @@ export function Game({ gameToken, playerToken }: Props) {
       <div className="flex justify-center">
         <div className="flex flex-row space-x-3 w-fit">
           <div>
-            {playerColor ? (
-              <div className="flex place-content-center">
-                <span className="mr-1">You are </span>
-                {' '}
-                <span className={playerColorClassNames[playerColor]}>{playerLabels[playerColor]}</span>
-              </div>
-            ) : null}
+            <div className="flex place-content-center">
+              <span className="mr-1">You are </span>
+              {' '}
+              <span className={playerColor ? playerColorClassNames[playerColor] : 'bg-gray-200'}>{playerColor ? playerLabels[playerColor] : 'a spectator'}</span>
+            </div>
             {game.game.nextPlayer ? (
               <div className="flex place-content-center">
                 <span className="mr-1">Turn is </span>
