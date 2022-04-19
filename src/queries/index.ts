@@ -13,7 +13,6 @@ export const GAME_SUBSCRIPTION = gql`
 `;
 
 export const CLAIM_PLAYER = gql`
-    # Increments a back-end counter and gets its resulting value
     mutation ClaimPlayer($gameToken: String!, $player: Player!) {
         claimPlayer(gameToken: $gameToken, player: $player) {
             playerToken
