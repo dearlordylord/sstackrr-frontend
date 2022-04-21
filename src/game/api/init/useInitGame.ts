@@ -11,8 +11,8 @@ export const useInitGame = () => {
   const mutate = useCallback(async (withBot?: boolean) => {
     const r = await mutate_({
       variables: {
-        botId: withBot ? ("RANDY" as BotId) : null
-      }
+        botId: withBot ? ('RANDY' as BotId) : null,
+      },
     });
     reset();
     return r;

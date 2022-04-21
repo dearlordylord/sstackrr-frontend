@@ -1,7 +1,6 @@
 import cx from 'classnames';
 import { useMemo } from 'react';
 import { useLastClaimedPlayer } from '../player/claim/useLastClaimedPlayer';
-import { NewGameButton } from '../game/newGameButton';
 import { makeGameRoute } from '../game/route';
 import { useLocalStorageContext } from '../localStorage/context';
 import { NewGameButtons } from '../game/newGameButtons';

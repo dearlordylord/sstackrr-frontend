@@ -1,1 +1,1 @@
-export type BotId = "RANDY";
+export type BotId = 'RANDY';

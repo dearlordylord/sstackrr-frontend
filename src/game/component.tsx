@@ -14,7 +14,6 @@ import { GameStateResponse } from './api/types';
 import { usePlayerColor } from '../player/usePlayerColor';
 import { useMakeTurn } from './api/turn';
 import { playerLabels } from '../player/labels';
-import { NewGameButton } from './newGameButton';
 import { makeGameRoute } from './route';
 import { playTurnSound } from '../sound';
 import { NewGameButtons } from './newGameButtons';
