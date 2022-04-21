@@ -17,6 +17,7 @@ import { playerLabels } from '../player/labels';
 import { NewGameButton } from './newGameButton';
 import { makeGameRoute } from './route';
 import { playTurnSound } from '../sound';
+import { NewGameButtons } from './newGameButtons';
 
 interface Props {
   gameToken: GameId;
@@ -187,7 +188,7 @@ export function Game({ gameToken, playerToken }: Props) {
             {' '}
             won!
           </div>
-          <NewGameButton />
+          <NewGameButtons />
         </div>
       ) : null}
       <div className="flex flex-row place-content-center">

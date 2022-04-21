@@ -4,6 +4,7 @@ import { useLastClaimedPlayer } from '../player/claim/useLastClaimedPlayer';
 import { NewGameButton } from '../game/newGameButton';
 import { makeGameRoute } from '../game/route';
 import { useLocalStorageContext } from '../localStorage/context';
+import { NewGameButtons } from '../game/newGameButtons';
 
 function ContinueButton() {
   const { data: playerToken } = useLastClaimedPlayer();
@@ -30,7 +31,7 @@ export function HomePage() {
   return (
     <div className="pt-10 w-full flex content-center items-center">
       <div className="space-x-4">
-        <NewGameButton />
+        <NewGameButtons />
         <ContinueButton />
       </div>
     </div>

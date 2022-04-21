@@ -22,8 +22,8 @@ export const CLAIM_PLAYER = gql`
 `;
 
 export const INIT_GAME = gql`
-    mutation InitGame {
-        initGame {
+    mutation InitGame($botId: BotId) {
+        initGame(botId: $botId) {
             id,
             state
         }

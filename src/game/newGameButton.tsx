@@ -6,23 +6,23 @@ import { useInitGame } from './api/init/useInitGame';
 import { Loader } from '../utils/loader';
 import { makeGameRoute } from './route';
 
-export function NewGameButton() {
+export function NewGameButton({ withBot }: { withBot?: boolean }) {
   const navigate = useNavigate();
   const { mutate, loading: isLoading } = useInitGame();
   const onNewGame = useCallback(async (e: MouseEvent) => {
     e.preventDefault();
-    const r = await mutate();
+    const r = await mutate(withBot);
     if (r.errors?.length) {
       toast.error('Error on game init');
       console.error('Error during game init:', r.errors);
       return;
     }
     navigate(makeGameRoute(r.data!.initGame.id));
-  }, [mutate, navigate]);
+  }, [mutate, navigate, withBot]);
   if (isLoading) return <Loader />;
   return (
     <button type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={onNewGame}>
-      New Game
+      New Game {withBot ? " With Bot" : ""}
     </button>
   );
 }
