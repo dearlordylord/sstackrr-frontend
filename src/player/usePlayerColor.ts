@@ -4,5 +4,4 @@ import { GET_ME_QUERY } from '../queries';
 
 export const usePlayerColor = (playerToken?: PlayerId) => useQuery<{me: PlayerColor}>(GET_ME_QUERY, {
   variables: { playerToken },
-
 });

@@ -7,7 +7,7 @@ import { GameId } from '../../../game/types';
 import { PlayerColor } from '../../types';
 import { ClaimPlayerResponse } from '../../api/types';
 import { useLastClaimedPlayer } from '../useLastClaimedPlayer';
-import { usePlayerIdForGameId } from '../../usePlayerIdForGameId';
+import { useSetPlayerIdForGameId } from '../../usePlayerIdForGameId';
 
 interface Args {
   gameToken: GameId;
@@ -24,7 +24,7 @@ export const useClaimPlayer = (gameToken?: GameId) => {
     claimPlayer: ClaimPlayerResponse;
   }, ApiArgs>(CLAIM_PLAYER);
   const { set: setLastClaimedPlayer } = useLastClaimedPlayer();
-  const { set: setPlayerIdForGameId } = usePlayerIdForGameId(gameToken);
+  const setPlayerIdForGameId = useSetPlayerIdForGameId();
   const mutate = useCallback(async (args: Args) => {
     // maybe we could update queries, but it's also being pushed with subscriptions anyways
     const r = await mutate_({
@@ -40,10 +40,10 @@ export const useClaimPlayer = (gameToken?: GameId) => {
       reset();
     });
     const token = r.data!.claimPlayer.playerToken;
-    setPlayerIdForGameId(token);
+    setPlayerIdForGameId(gameToken!, token);
     setLastClaimedPlayer(token);
     return r;
-  }, [mutate_, reset]);
+  }, [mutate_, reset, gameToken, setLastClaimedPlayer, setPlayerIdForGameId]);
   return {
     ...rest,
     mutate,

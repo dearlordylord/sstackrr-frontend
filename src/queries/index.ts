@@ -13,6 +13,7 @@ export const GAME_SUBSCRIPTION = gql`
 `;
 
 export const CLAIM_PLAYER = gql`
+
     mutation ClaimPlayer($gameToken: String!, $player: Player!) {
         claimPlayer(gameToken: $gameToken, player: $player) {
             playerToken

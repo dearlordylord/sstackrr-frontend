@@ -8,11 +8,15 @@ export const usePlayerIdForGameId = (gameToken?: GameId) => {
   const context = useLocalStorageContext();
   const playerToken = useMemo(
     () => (gameToken ? context.playerTokenForGameToken.get(gameToken) : undefined),
-    [gameToken, context.playerTokenForGameToken],
+    [gameToken, context],
   );
-  const set = useCallback((pt: PlayerId) => {
-    if (!gameToken) return;
+  return playerToken;
+};
+
+export const useSetPlayerIdForGameId = () => {
+  const context = useLocalStorageContext();
+  return useCallback((gameToken: GameId, pt: PlayerId) => {
+    if (!gameToken) throw new Error('gameToken is required');
     context.setPlayerTokenForGameToken(gameToken, pt);
-  }, [context.playerTokenForGameToken, context.setPlayerTokenForGameToken]);
-  return { data: playerToken, set };
+  }, [context]);
 };

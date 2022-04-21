@@ -13,7 +13,7 @@ const BluePlayerButton = makeClaimPlayerButton('BLUE');
 export function GamePage() {
   const { token: gameToken_ } = useParams();
   const gameToken = gameToken_ as GameId;
-  const { data: playerToken } = usePlayerIdForGameId(gameToken);
+  const playerToken = usePlayerIdForGameId(gameToken);
   const { data: gameData } = useGame(gameToken);
   const game = gameData?.game;
   return (

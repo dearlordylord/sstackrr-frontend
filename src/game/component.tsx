@@ -75,7 +75,7 @@ function ControlsButton({
       toast.error('Error making turn');
       throw err;
     });
-  }, [side, height, playerToken]);
+  }, [side, height, playerToken, makeTurn]);
   return (
     <button
       type="button"
@@ -133,7 +133,7 @@ const useTurnSound = ({ nextPlayer, playerColor, isPlayerColorLoading }: { nextP
     if (!previousPlayer) return;
     if (playerColor && previousPlayer === playerColor) return;
     playTurnSound();
-  }, [nextPlayer, playerColor]);
+  }, [nextPlayer, playerColor, isPlayerColorLoading]);
 };
 
 export function Game({ gameToken, playerToken }: Props) {

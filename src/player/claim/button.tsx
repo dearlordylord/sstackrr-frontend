@@ -28,7 +28,7 @@ export const makeClaimPlayerButton = (color: PlayerColor) => {
         throw e;
       });
       toast.success(`You are now ${playerLabel}`);
-    }, [disabled, gameToken, playerLabel]);
+    }, [disabled, gameToken, mutate]);
     if (isUpdating) return <Loader />;
     return (
       <button

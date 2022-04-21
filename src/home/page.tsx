@@ -13,7 +13,7 @@ function ContinueButton() {
       (e) => e[1] === playerToken,
     );
     return found ? found[0] : undefined;
-  }, [playerTokenForGameToken]);
+  }, [playerTokenForGameToken, playerToken]);
   return (
     <a
       href={gameToken ? makeGameRoute(gameToken) : '#'}
