@@ -109,11 +109,22 @@ const LeftControls = makeControls('LEFT');
 const RightControls = makeControls('RIGHT');
 
 function InviteLinkButton({ gameToken }: { gameToken: GameId }) {
-  const handleClick = useCallback((e: MouseEvent) => {
+  const handleClick = useCallback(async (e: MouseEvent) => {
     e.preventDefault();
-    const url = window.location.origin + makeGameRoute(gameToken);
-    window.navigator.clipboard.writeText(url);
-    toast.success('Invite link copied to clipboard');
+    try {
+      // browsers shmowsers
+      const url = window.location.origin + makeGameRoute(gameToken);
+      const permissionStatus = await window.navigator.permissions.query({ name: 'clipboard-write' as any });
+      if (permissionStatus.state === 'denied') {
+        toast.error('Clipboard access denied');
+        return;
+      }
+      await window.navigator.clipboard.writeText(url);
+      toast.success('Invite link copied to clipboard');
+    } catch (e) {
+      console.error(e);
+      toast.error('Clipboard access error');
+    }
   }, [gameToken]);
   return (
     <button type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleClick}>
