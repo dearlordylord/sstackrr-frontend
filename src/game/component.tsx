@@ -116,14 +116,14 @@ function InviteLinkButton({ gameToken }: { gameToken: GameId }) {
       const url = window.location.origin + makeGameRoute(gameToken);
       const permissionStatus = await window.navigator.permissions.query({ name: 'clipboard-write' as any });
       if (permissionStatus.state === 'denied') {
-        toast.error('Clipboard access denied');
+        toast.error('Clipboard access denied. Please copy browser url manually.');
         return;
       }
       await window.navigator.clipboard.writeText(url);
       toast.success('Invite link copied to clipboard');
     } catch (err) {
       console.error(err);
-      toast.error('Clipboard access error');
+      toast.error('Clipboard access error. Please copy browser url manually.');
     }
   }, [gameToken]);
   return (
