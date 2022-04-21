@@ -121,8 +121,8 @@ function InviteLinkButton({ gameToken }: { gameToken: GameId }) {
       }
       await window.navigator.clipboard.writeText(url);
       toast.success('Invite link copied to clipboard');
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
       toast.error('Clipboard access error');
     }
   }, [gameToken]);
