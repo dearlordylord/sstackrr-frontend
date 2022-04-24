@@ -21,6 +21,9 @@ import { NewGameButtons } from './newGameButtons';
 interface Props {
   gameToken: GameId;
   playerToken?: PlayerId;
+  gameData: {
+    game: GameStateResponse;
+  };
 }
 
 const cellMarginClass = 'm-1';
@@ -147,23 +150,13 @@ const useTurnSound = ({ nextPlayer, playerColor, isPlayerColorLoading }: { nextP
   }, [nextPlayer, playerColor, isPlayerColorLoading]);
 };
 
-export function Game({ gameToken, playerToken }: Props) {
-  const { data: gameData, loading: isGameLoading, error } = useGame(gameToken);
+export function Game({ gameData, gameToken, playerToken }: Props) {
   const cellSide = useCellSide();
   const { data: playerColorData, loading: isColorLoading } = usePlayerColor(playerToken);
   const playerColor = playerColorData?.me;
-  const isLoading = isGameLoading || isColorLoading;
+  const isLoading = isColorLoading;
   useTurnSound({ nextPlayer: gameData?.game.nextPlayer, playerColor, isPlayerColorLoading: isColorLoading });
   if (isLoading) return <Loader />;
-  if (error) {
-    return (
-      <div>
-        Error $
-        {error.message}
-      </div>
-    );
-  }
-  if (!gameData) return <div>No game fetched</div>; // unlikely but will fix us a type error
   const game = gameData?.game;
   const field = game.state;
   const canControl = !!playerToken && !game.isStalemate && !game.winner && game.nextPlayer === playerColor;

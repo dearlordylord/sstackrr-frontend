@@ -32,6 +32,8 @@ export const INIT_GAME = gql`
 
 export const TURN = gql`
     mutation Turn($playerToken: String!, $turn: TurnInput!) {
-        turn(playerToken: $playerToken, turn: $turn) ${GAME_STATE_FIELDS_PARTIAL}
+        turn(playerToken: $playerToken, turn: $turn) {
+            id,
+        }
     }
 `;

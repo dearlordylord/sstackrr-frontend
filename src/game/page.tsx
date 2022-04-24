@@ -6,6 +6,7 @@ import { GameId } from './types';
 import { Game } from './component';
 import { makeClaimPlayerButton } from '../player/claim/button';
 import { useGame } from './api/get';
+import { Loader } from '../utils/loader';
 
 const RedPlayerButton = makeClaimPlayerButton('RED');
 const BluePlayerButton = makeClaimPlayerButton('BLUE');
@@ -14,7 +15,8 @@ export function GamePage() {
   const { token: gameToken_ } = useParams();
   const gameToken = gameToken_ as GameId;
   const playerToken = usePlayerIdForGameId(gameToken);
-  const { data: gameData } = useGame(gameToken);
+  const { data: gameData, loading: isGameLoading, error: gameLoadingError } = useGame(gameToken);
+  console.log("gameData", gameData);
   const game = gameData?.game;
   return (
     <div className="pt-10 w-full flex">
@@ -26,7 +28,11 @@ export function GamePage() {
           {!game?.redClaimed ? <RedPlayerButton gameToken={gameToken} playerToken={playerToken} /> : null }
           {!game?.blueClaimed ? <BluePlayerButton gameToken={gameToken} playerToken={playerToken} /> : null }
         </div>
-        <Game gameToken={gameToken} playerToken={playerToken} />
+        {gameLoadingError ? <div>
+          Error $
+          {gameLoadingError.message}
+        </div> : isGameLoading ? <Loader /> : <Game gameData={gameData!} gameToken={gameToken} playerToken={playerToken} />}
+
       </div>
     </div>
   );
