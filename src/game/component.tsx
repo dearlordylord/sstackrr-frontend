@@ -6,7 +6,6 @@ import {
 import { toast } from 'react-toastify';
 import { GameId, GameSide } from './types';
 import { PlayerColor, PlayerId } from '../player/types';
-import { useGame } from './api/get';
 import { Loader } from '../utils/loader';
 import { playerColorClassNames } from '../player/colors';
 

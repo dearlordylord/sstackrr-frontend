@@ -23,7 +23,7 @@ export const useGame = (token: GameId) => {
       },
       updateQuery: (prev: GameQueryResponse, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
-        console.log("subscriptionData.data", subscriptionData.data);
+        console.log('subscriptionData.data', subscriptionData.data);
         return subscriptionData.data;
       },
     });
