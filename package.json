@@ -31,7 +31,8 @@
     "eject": "react-scripts eject",
     "lint": "npx eslint . --ext ts,tsx --fix",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "chromatic": "npx chromatic --project-token=de5480c2950d"
   },
   "eslintConfig": {
     "extends": [
@@ -76,6 +77,7 @@
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
     "autoprefixer": "^10.4.4",
+    "chromatic": "^6.5.4",
     "eslint": "^8.13.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.26.0",
