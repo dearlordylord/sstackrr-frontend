@@ -29,7 +29,7 @@ const cellMarginClass = 'm-1';
 
 const cellColorClassName = (p: PlayerColor | null) => (p ? playerColorClassNames[p] : 'bg-gray-100');
 
-const Field = forwardRef<HTMLDivElement, { field: GameStateResponse['state'], cellSide: number }>(({ field, cellSide }, ref) => {
+export const Field = forwardRef<HTMLDivElement, { field: GameStateResponse['state'], cellSide: number }>(({ field, cellSide }, ref) => {
   const squareStyles = useMemo(() => ({
     width: `${cellSide}px`,
     height: `${cellSide}px`,
@@ -57,9 +57,8 @@ const controlsButtonSymbols: {[k in GameSide]: string} = {
 };
 
 function ControlsButton({
-  cellSide, side, height, playerColor, playerToken,
-}: {playerToken?: PlayerId, playerColor: PlayerColor, cellSide: number, height: number, side: GameSide}) {
-  const { mutate: makeTurn } = useMakeTurn();
+  cellSide, side, height, playerColor, onControl,
+}: {playerColor: PlayerColor, cellSide: number, height: number, side: GameSide, onControl: (side: GameSide, height: number) => void, }) {
   const marginClass = cellMarginClass;
   const squareStyles = useMemo(() => ({
     width: `${cellSide}px`,
@@ -67,17 +66,8 @@ function ControlsButton({
   }), [cellSide]);
   const handleClick = useCallback(async (e: MouseEvent) => {
     e.preventDefault();
-    await makeTurn({
-      playerToken: playerToken!,
-      turn: {
-        side, height,
-      },
-    }).catch((err) => {
-      console.error('error making turn', err);
-      toast.error('Error making turn');
-      throw err;
-    });
-  }, [side, height, playerToken, makeTurn]);
+    onControl(side, height);
+  }, [onControl, side, height]);
   return (
     <button
       type="button"
@@ -92,15 +82,15 @@ function ControlsButton({
 
 /* eslint-disable react/no-array-index-key */
 const makeControls = (side: GameSide) => function ({
-  canControl, playerToken, playerColor, field, cellSide,
-}: { canControl: boolean, playerToken?: PlayerId, playerColor: PlayerColor, field: GameStateResponse['state'], cellSide: number }) {
+  canControl, onControl, playerColor, field, cellSide,
+}: { canControl: boolean, onControl: (side: GameSide, height: number) => void, playerColor: PlayerColor, field: GameStateResponse['state'], cellSide: number }) {
   return (
     <div className={cx('flex flex-col', {
       invisible: !canControl,
     })}
     >
       {field.map((_, i) => (
-        <ControlsButton playerToken={playerToken} playerColor={playerColor} height={i} cellSide={cellSide} side={side} key={i} />
+        <ControlsButton onControl={onControl} playerColor={playerColor} height={i} cellSide={cellSide} side={side} key={i} />
       ))}
     </div>
   );
@@ -109,6 +99,18 @@ const makeControls = (side: GameSide) => function ({
 
 const LeftControls = makeControls('LEFT');
 const RightControls = makeControls('RIGHT');
+
+export function FieldWithControls({
+  canControl, playerColor, field, cellSide, onControl,
+}: {canControl: boolean, playerColor: PlayerColor, field: GameStateResponse['state'], cellSide: number, onControl: (side: GameSide, height: number) => void;}) {
+  return (
+    <div className="flex flex-row place-content-center">
+      <LeftControls canControl={canControl} onControl={onControl} playerColor={playerColor} field={field} cellSide={cellSide} />
+      <Field cellSide={cellSide} field={field} />
+      <RightControls canControl={canControl} onControl={onControl} playerColor={playerColor} field={field} cellSide={cellSide} />
+    </div>
+  );
+}
 
 function InviteLinkButton({ gameToken }: { gameToken: GameId }) {
   const handleClick = useCallback(async (e: MouseEvent) => {
@@ -149,12 +151,29 @@ const useTurnSound = ({ nextPlayer, playerColor, isPlayerColorLoading }: { nextP
   }, [nextPlayer, playerColor, isPlayerColorLoading]);
 };
 
+const useOnControl = ({ playerToken }: { playerToken?: PlayerId }) => {
+  const { mutate: makeTurn } = useMakeTurn();
+  return useCallback(async (side: GameSide, height: number) => {
+    await makeTurn({
+      playerToken: playerToken!,
+      turn: {
+        side, height,
+      },
+    }).catch((err) => {
+      console.error('error making turn', err);
+      toast.error('Error making turn');
+      throw err;
+    });
+  }, [makeTurn, playerToken]);
+};
+
 export function Game({ gameData, gameToken, playerToken }: Props) {
   const cellSide = useCellSide();
   const { data: playerColorData, loading: isColorLoading } = usePlayerColor(playerToken);
   const playerColor = playerColorData?.me;
   const isLoading = isColorLoading;
   useTurnSound({ nextPlayer: gameData?.game.nextPlayer, playerColor, isPlayerColorLoading: isColorLoading });
+  const onControl = useOnControl({ playerToken });
   if (isLoading) return <Loader />;
   const game = gameData?.game;
   const field = game.state;
@@ -193,11 +212,13 @@ export function Game({ gameData, gameToken, playerToken }: Props) {
           <NewGameButtons />
         </div>
       ) : null}
-      <div className="flex flex-row place-content-center">
-        <LeftControls canControl={canControl} playerToken={playerToken} playerColor={playerColor!} field={field} cellSide={cellSide} />
-        <Field cellSide={cellSide} field={field} />
-        <RightControls canControl={canControl} playerToken={playerToken} playerColor={playerColor!} field={field} cellSide={cellSide} />
-      </div>
+      <FieldWithControls
+        field={field}
+        cellSide={cellSide}
+        canControl={canControl}
+        onControl={onControl}
+        playerColor={playerColor!}
+      />
     </div>
   );
 }

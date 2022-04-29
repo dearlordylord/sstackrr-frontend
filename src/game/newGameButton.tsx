@@ -6,6 +6,16 @@ import { useInitGame } from './api/init/useInitGame';
 import { Loader } from '../utils/loader';
 import { makeGameRoute } from './route';
 
+export function NewGameButtonComponent({ withBot, onClick }: { withBot?: boolean; onClick: (e: MouseEvent) => void; }) {
+  return (
+    <button type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={onClick}>
+      New Game
+      {' '}
+      {withBot ? ' With Bot' : ''}
+    </button>
+  );
+}
+
 export function NewGameButton({ withBot }: { withBot?: boolean }) {
   const navigate = useNavigate();
   const { mutate, loading: isLoading } = useInitGame();
@@ -20,11 +30,5 @@ export function NewGameButton({ withBot }: { withBot?: boolean }) {
     navigate(makeGameRoute(r.data!.initGame.id));
   }, [mutate, navigate, withBot]);
   if (isLoading) return <Loader />;
-  return (
-    <button type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={onNewGame}>
-      New Game
-      {' '}
-      {withBot ? ' With Bot' : ''}
-    </button>
-  );
+  return <NewGameButtonComponent withBot={withBot} onClick={onNewGame} />;
 }
