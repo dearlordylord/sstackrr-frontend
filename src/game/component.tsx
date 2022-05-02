@@ -1,10 +1,10 @@
 import cx from 'classnames';
 import {
-  forwardRef, useMemo, MouseEvent, useCallback, useEffect, useRef,
+  forwardRef, MouseEvent, useCallback, useEffect, useMemo, useRef,
 } from 'react';
 
 import { toast } from 'react-toastify';
-import { GameId, GameSide } from './types';
+import { GameField, GameId, GameSide } from './types';
 import { PlayerColor, PlayerId } from '../player/types';
 import { Loader } from '../utils/loader';
 import { playerColorClassNames } from '../player/colors';
@@ -16,6 +16,8 @@ import { playerLabels } from '../player/labels';
 import { makeGameRoute } from './route';
 import { playTurnSound } from '../sound';
 import { NewGameButtons } from './newGameButtons';
+import { cellMarginClass } from './styles';
+import { GameCell } from './cell';
 
 interface Props {
   gameToken: GameId;
@@ -25,29 +27,19 @@ interface Props {
   };
 }
 
-const cellMarginClass = 'm-1';
-
-const cellColorClassName = (p: PlayerColor | null) => (p ? playerColorClassNames[p] : 'bg-gray-100');
-
-export const Field = forwardRef<HTMLDivElement, { field: GameStateResponse['state'], cellSide: number }>(({ field, cellSide }, ref) => {
-  const squareStyles = useMemo(() => ({
-    width: `${cellSide}px`,
-    height: `${cellSide}px`,
-  }), [cellSide]);
-  /* eslint-disable react/no-array-index-key */
-  return (
-    <div className="flex flex-col align-center" ref={ref}>
-      {field.map((row, i) => (
-        <div className="flex flex-row justify-center" key={i}>
-          {row.map((cell, j) => (
-            <div style={squareStyles} className={cx('rounded', cellMarginClass, cellColorClassName(cell))} key={j} />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-  /* eslint-enable react/no-array-index-key */
-});
+/* eslint-disable react/no-array-index-key */
+export const Field = forwardRef<HTMLDivElement, { field: GameField, cellSide: number }>(({ field, cellSide }, ref) => (
+  <div className="flex flex-col align-center" ref={ref}>
+    {field.map((row, i) => (
+      <div className="flex flex-row justify-center" key={i}>
+        {row.map((cell, j) => (
+          <GameCell cell={cell} cellSide={cellSide} key={j} />
+        ))}
+      </div>
+    ))}
+  </div>
+));
+/* eslint-enable react/no-array-index-key */
 
 const useCellSide = () => 70; // todo calculate responsively
 
@@ -83,7 +75,7 @@ function ControlsButton({
 /* eslint-disable react/no-array-index-key */
 const makeControls = (side: GameSide) => function ({
   canControl, onControl, playerColor, field, cellSide,
-}: { canControl: boolean, onControl: (side: GameSide, height: number) => void, playerColor: PlayerColor, field: GameStateResponse['state'], cellSide: number }) {
+}: { canControl: boolean, onControl: (side: GameSide, height: number) => void, playerColor: PlayerColor, field: GameField, cellSide: number }) {
   return (
     <div className={cx('flex flex-col', {
       invisible: !canControl,
@@ -102,7 +94,7 @@ const RightControls = makeControls('RIGHT');
 
 export function FieldWithControls({
   canControl, playerColor, field, cellSide, onControl,
-}: {canControl: boolean, playerColor: PlayerColor, field: GameStateResponse['state'], cellSide: number, onControl: (side: GameSide, height: number) => void;}) {
+}: {canControl: boolean, playerColor: PlayerColor, field: GameField, cellSide: number, onControl: (side: GameSide, height: number) => void;}) {
   return (
     <div className="flex flex-row place-content-center">
       <LeftControls canControl={canControl} onControl={onControl} playerColor={playerColor} field={field} cellSide={cellSide} />

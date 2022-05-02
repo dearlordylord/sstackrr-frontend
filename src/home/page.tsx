@@ -4,6 +4,7 @@ import { useLastClaimedPlayer } from '../player/claim/useLastClaimedPlayer';
 import { makeGameRoute } from '../game/route';
 import { useLocalStorageContext } from '../localStorage/context';
 import { NewGameButtons } from '../game/newGameButtons';
+import { Tutorial } from '../game/tutorial';
 
 function ContinueButton() {
   const { data: playerToken } = useLastClaimedPlayer();
@@ -21,18 +22,19 @@ function ContinueButton() {
         'opacity-50 cursor-not-allowed': !gameToken,
       })}
     >
-      Continue
+      Continue the last Game
     </a>
   );
 }
 
 export function HomePage() {
   return (
-    <div className="pt-10 w-full flex content-center items-center">
-      <div className="space-x-4">
+    <div className="pt-10 w-full flex flex-col content-center items-center">
+      <div className="space-x-4 mb-10">
         <NewGameButtons />
         <ContinueButton />
       </div>
+      <Tutorial />
     </div>
   );
 }

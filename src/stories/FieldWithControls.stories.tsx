@@ -3,7 +3,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import { FieldWithControls } from '../game/component';
 import { GameStateResponse } from '../game/api/types';
-import { PlayerColor } from '../player/types';
+import { playerColorControl } from './args';
 
 export default {
   title: 'Game/FieldWithControls',
@@ -28,12 +28,7 @@ export default {
         type: 'string',
       },
     },
-    playerColor: {
-      control: {
-        type: 'select',
-        options: ['RED', 'BLUE'] as PlayerColor[],
-      },
-    },
+    playerColor: playerColorControl,
   },
 } as ComponentMeta<typeof FieldWithControls>;
 

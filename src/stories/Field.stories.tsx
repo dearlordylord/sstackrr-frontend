@@ -3,19 +3,13 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import { Field } from '../game/component';
 import { GameStateResponse } from '../game/api/types';
+import { cellSideArgControl } from './args';
 
 export default {
   title: 'Game/Field',
   component: Field,
   argTypes: {
-    cellSide: {
-      control: {
-        type: 'range',
-        min: 1,
-        max: 100,
-        step: 1,
-      },
-    },
+    cellSide: cellSideArgControl,
   },
 } as ComponentMeta<typeof Field>;
 

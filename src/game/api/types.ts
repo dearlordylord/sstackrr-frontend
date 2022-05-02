@@ -7,12 +7,12 @@
   isStalemate: Boolean!
 }
  */
-import { GameId } from '../types';
-import { PlayerColor } from '../../player/types';
+import type { GameField, GameId } from '../types';
+import type { PlayerColor } from '../../player/types';
 
 export interface GameStateResponse {
   id: GameId;
-  state: (PlayerColor | null)[][];
+  state: GameField;
   nextPlayer?: PlayerColor;
   winner?: PlayerColor;
   isStalemate: boolean;

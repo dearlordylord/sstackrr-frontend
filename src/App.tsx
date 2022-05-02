@@ -6,6 +6,7 @@ import { Layout } from './Layout';
 import { GamePage } from './game/page';
 import { makeGameRoute } from './game/route';
 import { LocalStorageContextProvider } from './localStorage/context';
+import { Tutorial } from './game/tutorial';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
+            <Route path="/tutorial" element={<Tutorial />} />
             <Route path={makeGameRoute(':token')} element={<GamePage />} />
           </Route>
         </Routes>
